@@ -69,33 +69,36 @@ By default this Vagrant Box has two folders thare are shared between your local 
 ## Install Wordpress MultiSite
 
 * [Install Wordpress](http://codex.wordpress.org/Installing_WordPress) in the `www` folder and remove `index.php`
-* [Configured Wordpress for multisite](http://codex.wordpress.org/Create_A_Network)
+* [Configure Wordpress for multisite](http://codex.wordpress.org/Create_A_Network) - 
+*   * when prompted select *sub domain* set up instead of *sub directories*
+*   * After creating the network there will be a red error at the top of the page (**Warning, Wildcard DNS may not be configured correctly!** ) You can ignore this, as we are handling this with local edits to `/etc/hosts`/ and domain mapping. 
 * Install [Wordpress MU Domain Mapping](http://wordpress.org/extend/plugins/wordpress-mu-domain-mapping/) and [configure it](http://wordpress.org/extend/plugins/wordpress-mu-domain-mapping/installation/). **Note**: Follow steps 1-3. This plugin has unusual configuration options, read the configuration notes!
 
 ## Add a Domain 
 
 * Ensure that the A records for the intended domain have been added to `/etc/hosts`
-* My Sites > Network Admin > Plugins | 'Network Enable' Wordpress MultiSite Domain Mapping
-* My Sites > Network Admin > Settings > Domain Mapping | Leave inputs blank and deselect everything except for 2. Permanent redirect
-* My Sites > Network Admin > Sites > Create New Site | Create your new site. Must match the <project> created in /etc/hosts
-* Get the ID of this site by going to:
-* My Site > Network admin > Sites
-* Looking in the column for the site ID (if you don't see this, enable 'Show Site ID' plugin in Network Admin
-* My Sites > Network Admin > Settings > Domains | Under "New Domain" add:
-Site ID
-* NEW destinations folder (site1.mydomain.com)
-* Leave Primary checked
-* Visit http://site1.mydomain .local in the browser
-* You're up and running!
+* **Menu: My Sites > Network Admin > Plugins** - *Network Enable* Wordpress MultiSite Domain Mapping Plugin
+* **Menu: My Sites > Network Admin > Settings > Domain Mapping** -  Leave inputs blank and deselect everything except for 2. Permanent redirect and click **Save**
+* **Menu: My Sites > Network Admin > Sites > Create New Site** Create your new site. Use the same site that you mapped in `/etc/hosts` (eg site1.wordpress.mydomain.local - we will remap this shortly)
+* Get the ID of this site:
+  * **Menu: My Site > Network admin > Sites**
+  * Get the Site ID either by hovering over the `Domain title` or installing the [Show Site ID Columns Plugin](http://halfelf.org/hacks/site-id-columns-multisite/)
+  * The first site created should be `id=2`
+* **Menu: My Sites > Network Admin > Settings > Domains** - Under "New Domain" add:
+  * Site ID = ID in the above step (eg 2)
+  * Domain = New requested domain (`site1.mydomain.local`)
+  * Primary: Leave this checked
+* Visit [http://site1.mydomain.local](http://site1.mydomain.local) in the browser
+* You're up and running! Enjoy a cold beverage! 
 
-## Set up Grunt
+# Set up Grunt
 We use [Grunt.js](http://gruntjs.com) as a task runner for everything from compiling CSS Propressors to JSHinting Javascript. If you want you can install and configure it on your computer but the beauty of Vagrant is that it has already been installed on the box and is ready for use. 
 
 * SSH into the Vagrant Box `vagrant ssh` (while in config/vagrant) 
 * Navigate to the directory containing all the config files (`cd /vagrant/config/grunt`)
 * Install all of the plugins with `npm install`. This installs Less, Sass, Compass, JSHint, Uglify, Coffee Script, Concat and Watch.
 
-## Our Gruntfile
+## The Gruntfile
 You can [customize your Gruntfile](http://gruntjs.com/configuring-tasks) in many ways and included is the one that works for us and our set up making use of Less, JSHint, Uglify and watch. 
 
 Replace this line with the name of the theme to be worked on: 
