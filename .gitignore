@@ -1,0 +1,41 @@
+#  always-ignore extensions
+*.diff
+*.err
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.vi
+*~
+*.sass-cache
+
+# OS or Editor folders
+.DS_Store
+Thumbs.db
+.cache
+.project
+.settings
+.tmproj
+*.esproj
+nbproject
+
+# Dreamweaver added files
+_notes
+dwsync.xml
+
+# WPMU Project specific stuff
+wp-config.php
+wp-content/uploads
+.htaccess
+sitemap.xml.gz
+sitemap.xml
+feed.xml
+.htaccess
+wp-content/cache
+wp-content/w3tc-config
+wp-content/uploads
+wp-content/db.php
+wp-content/object-cache.php
+wp-content/advanced-cache.php
+config/Vagrant/.vagrant/
