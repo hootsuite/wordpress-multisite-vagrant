@@ -1,20 +1,18 @@
-# Preamble
+## Problem
 
-We needed a Vagrant box that was configured to host Wordpress Multisite complete with custom domain mapping. This is our solution. It is based on the following requirements: 
+HootSuite needed a Vagrant box that was configured to host Wordpress Multisite complete with custom domain mapping. At the outset of the project our requirements were:
 
-* Vagrant box tuned to Wordpress Development
+* Vagrant box tuned for Wordpress Multi Site Development
 * Build tools contained on the Vagrant Box that easily work with multiple themes
-* Ability to map domains
-* …more?
+* Ability to map domains with high degree of flexibility
 
+## Preperation
 
-# Preperation
-
-## Install Vagrant
+### Install Vagrant
 Install [Vagrant](http://www.vagrantup.com/) (ideally 1.2.2 or greater) [Installation Instructions](http://docs.vagrantup.com/v2/installation/index.html)
 
-## Accessing the Database
-During following steps accessing the database is required. The Vagrant box includes MySQL but not phpMyAdmin. Instead use [Sequel Pro](http://www.sequelpro.com/) to connect to the database using these settings: 
+### How to access the Database on the Vagrant Box
+During the following steps accessing the database is required. The Vagrant box includes MySQL but not phpMyAdmin. Instead use [Sequel Pro](http://www.sequelpro.com/) to connect to the database using these settings: 
 
 * MySql Host: `127.0.0.1`
 * Username: `root`
@@ -28,7 +26,7 @@ During following steps accessing the database is required. The Vagrant box inclu
 
 This Vagrant box includes a database called `Wordpress`. Others can be added if required. These instructions will always use and reference the `Wordpress` DB. 
 
-## Local Hosts File
+### Editing Local Hosts File
 
 Vagrant needs an IP in order to initialize a server but we want to map subdomains to mirror our production environment. For our usecase, and for this example, we will be installing our site at `wordpress.mydomain.com` and want to create `site1.mydomain.com`, `site2.mydomain.com` etc. For development `.local` top level domain. 
 
@@ -44,9 +42,9 @@ Prior to installing Wordpress edit your local `/etc/hosts`/ file to include thes
 * Lines 2 and 3 can be repeated to add more sites (site2, site3 etc)
 * `mydomain.local` can be replaced with project specific URL's
 
-## Vagrant Shared Folders
+### Shared Folders
 
-By default this Vagrant Box has two folders thare are shared between your local machine. These have been set in the Vagrant file.  
+This Vagrant Box has two folders thare are shared between your local machine. These have been set in the Vagrant file.  
 
 | Local Path 	| Vagrant Path	|
 | -------------	| -------------	| 
@@ -54,27 +52,26 @@ By default this Vagrant Box has two folders thare are shared between your local 
 | /www/			| /ebs1/www/	|
 
 
-# Getting Started
+## Getting Started
 
 
-## Initilization
+### Initilization
 * Clone the repository: `git clone https://github.com/HootSuiteMediaInc/wordpress-multisite-vagrant.git projectName`
 * Navigate to the Vagrant folder `cd projectName/config/vagrant/`
 * Download the Vagrant Box and `vagrant up` to initialize the virtual machine
 * Load `http://wordpress.mydomain.local` to test if everything is working, if not visit [Vagrant Docs](http://docs.vagrantup.com/v2/) to get started
 
 
+### Install Wordpress MultiSite
 
-
-## Install Wordpress MultiSite
-
-* [Install Wordpress](http://codex.wordpress.org/Installing_WordPress) in the `www` folder and remove `index.php`
+* Remove `index.php` in the Vagrant `/www/` folder (it's there to confirm installation went properly)
+* [Install Wordpress](http://codex.wordpress.org/Installing_WordPress) in the `www` folder
 * [Configure Wordpress for multisite](http://codex.wordpress.org/Create_A_Network) - 
 *   * when prompted select *sub domain* set up instead of *sub directories*
 *   * After creating the network there will be a red error at the top of the page (**Warning, Wildcard DNS may not be configured correctly!** ) You can ignore this, as we are handling this with local edits to `/etc/hosts`/ and domain mapping. 
 * Install [Wordpress MU Domain Mapping](http://wordpress.org/extend/plugins/wordpress-mu-domain-mapping/) and [configure it](http://wordpress.org/extend/plugins/wordpress-mu-domain-mapping/installation/). **Note**: Follow steps 1-3. This plugin has unusual configuration options, read the configuration notes!
 
-## Add a Domain 
+### Add a Domain 
 
 * Ensure that the A records for the intended domain have been added to `/etc/hosts`
 * **Menu: My Sites > Network Admin > Plugins** - *Network Enable* Wordpress MultiSite Domain Mapping Plugin
@@ -91,31 +88,47 @@ By default this Vagrant Box has two folders thare are shared between your local 
 * Visit [http://site1.mydomain.local](http://site1.mydomain.local) in the browser
 * You're up and running! Enjoy a cold beverage! 
 
-# Set up Grunt
-We use [Grunt.js](http://gruntjs.com) as a task runner for everything from compiling CSS Propressors to JSHinting Javascript. If you want you can install and configure it on your computer but the beauty of Vagrant is that it has already been installed on the box and is ready for use. 
+## Grunt.js
+This VM uses [Grunt.js](http://gruntjs.com) as a task runner. The beauty of Vagrant is that it has already been installed on the box and is ready for use without configuring your local machine.
 
-* SSH into the Vagrant Box `vagrant ssh` (while in config/vagrant) 
+* SSH into the Vagrant Box `vagrant ssh` (while in `config/vagrant`) 
 * Navigate to the directory containing all the config files (`cd /vagrant/config/grunt`)
-* Install all of the plugins with `npm install`. This installs Less, Sass, Compass, JSHint, Uglify, Coffee Script, Concat and Watch.
+* Install all of the plugins by running `npm install`.
 
-## The Gruntfile
-You can [customize your Gruntfile](http://gruntjs.com/configuring-tasks) in many ways and included is the one that works for us and our set up making use of Less, JSHint, Uglify and watch. 
+This will install:
 
-Replace this line with the name of the theme to be worked on: 
+* [Less](https://github.com/gruntjs/grunt-contrib-less)
+* [Sass](https://github.com/gruntjs/grunt-contrib-sass)
+* [Compass](https://github.com/gruntjs/grunt-contrib-compass)
+* [JSHint](https://github.com/gruntjs/grunt-contrib-JSHint)
+* [Uglify](https://github.com/gruntjs/grunt-contrib-uglify)
+* [Coffee Script](https://github.com/gruntjs/grunt-contrib-coffee)
+* [Concat](https://github.com/gruntjs/grunt-contrib-concat)
+* [Watch](https://github.com/gruntjs/grunt-contrib-watch)
+
+### The Gruntfile
+You can [customize your Gruntfile](http://gruntjs.com/configuring-tasks) how you want. These are the included tasks. 
+
+First, replace our theme name with yours: 
 	
-	theme: `/ebs1/www/wp-content/themes/hootsuite
+	theme: `/ebs1/www/wp-content/themes/hootsuite`
 
-### Grunt and Less
-Our set up makes use of `css/less/styles.less` that uses `@import` to pull in all other files. Due to this set up, running the grunt task on this file will build `css/styles.css`. You also have access to the following commands by default: 
+### Less
+
+This Gruntfile presumes that you have a main css file (`css/less/styles.less`) that `@imports` all other ones for your project and compiles them to `css/styles.less`. If this isn't the case you'll need to edit the GruntFile to reflect this. 
+
+The following commands are available by default: 
 
 * `grunt less:development` - builds the CSS but does not compress it
 * `grunt less:production` - builds and compresses the CSS with yuicompress
 * `grunt watch:less` - Watches all less files and runs `grunt less:development` when any file is saved
 
-Any files that are not built from `css/less/styles.less` will have to have inpendant commands written for them. eg `css/less/ie.less`
+Any files that are not built from `css/less/styles.less` will have to have additional tasks written for them. (eg `css/less/ie.less`)
 
-### Grunt and Javascript
-We wanted this gruntfile to work for multiple themes in our Wordpress Multisite installation. Unlike LESS, which just can watch `css/less/styles.less` regardless of which project we're working on, the JS build configuration is going to be different for each project. Normally we would write this directly into the uglify task but abstracted it so that the gruntfile looks for and parses a theme specific `js/dev/config.json` and imports that into any tasks that require it. The syntax for the `js/dev/config.json` file is: 
+### Javascript
+We needed this gruntfile to work for multiple themes in our Wordpress Multisite installation. Unlike LESS, which just can watch `css/less/styles.less` regardless of which project we're working on, the JS build configuration is going to be different for each project. 
+
+Normally we would write this directly into the uglify task but abstracted it so that the gruntfile looks for and parses a theme specific file (`js/dev/config.json`) and imports that into any tasks that require it. The syntax for the `js/dev/config.json` file is: 
 
 
 	{"files": [
@@ -123,11 +136,23 @@ We wanted this gruntfile to work for multiple themes in our Wordpress Multisite 
 		"file2.js"
 	]}
 
-Additionally the following tasks are available by default: 
+The following tasks are available to this list of files: 
 
-* `grunt jshint` Runs JSHint on `js/dev/scriptsjs`. 
-* `grunt uglify` Runs Uglify on all files specified in `js/dev/config.json` and builds `js/scripts.min.js`
+* `grunt jshint` Runs JSHint on `js/dev/scripts.js`. 
+* `grunt uglify` Runs Uglify on all files specified in `js/dev/config.json` and builds to `js/scripts.min.js`
 * `grunt watch:js` Runs Uglify and JSHint whenever `js/dev/scripts.js` is saved with
 
 ### Default Grunt Task
-* `grunt` watches LSS and JS and runs `grunt less:development`, `grunt uglify` and `grunt jshint` when files are saved. 
+* `grunt` watches LESS and JS and runs `grunt less:development`, `grunt uglify` and `grunt jshint` when files are saved. 
+
+## Contribution
+
+This project solves a niche issue for us in a very particular way and there are many things required to make this 100% stable and usable for any project required to do after this starting point. 
+
+Anyone is welcome to contribute. 
+
+### Team Members
+
+* Joe Ying - PHP Developer
+* Jeff Waterfall - Front End / Wordpress Developer 
+* [Steve Mynett](http://twitter.com/stevemynett) - Front End / Wordpress Developer
