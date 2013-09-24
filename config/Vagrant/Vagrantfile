@@ -4,7 +4,7 @@
 Vagrant::Config.run do |config|
   config.vm.customize ["modifyvm", :id, "--memory", 1536]
   config.vm.box = "wordpress-multisite"
-  config.vm.box_url = "http://external.hootsuitemedia.com/vagrant/wordpress-multisite-vagrant.box"
+  config.vm.box_url = "http://externalweb.hootsuitemedia.com/vagrant/wordpress-multisite-vagrant.box"
   config.vm.network :hostonly, "192.168.37.21"
   config.vm.share_folder("vagrant-root","/ebs1/www/","../../www", :owner => 'vagrant', :group => 'www-data', :extra=> 'dmode=775,fmode=775')
   config.vm.share_folder("vagrant-root2", "/vagrant", "../../", :create => true)
