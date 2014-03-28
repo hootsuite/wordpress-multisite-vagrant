@@ -1,4 +1,10 @@
-## Problem
+### *Project Status Update*
+
+*This project was started early in 2013 and the associated internal project was never completed and shipped. Consequently it is not under active development or being updated. Pull requests for updates will be reviewed and accepted where appropriate.*
+
+# Vagrant and Wordpress Multi Site
+
+## Overview
 
 HootSuite needed a Vagrant box that was configured to host Wordpress Multisite complete with custom domain mapping. At the outset of the project our requirements were:
 
@@ -6,13 +12,15 @@ HootSuite needed a Vagrant box that was configured to host Wordpress Multisite c
 * Build tools contained on the Vagrant Box that easily work with multiple themes
 * Ability to map domains with high degree of flexibility
 
-## Preperation
+This project solves a niche issue for us in a very particular way and there are many things required to make this 100% stable and usable for any project required to do after this starting point. 
 
-### Install Vagrant
-Install [Vagrant](http://www.vagrantup.com/) (ideally 1.2.2 or greater) [Installation Instructions](http://docs.vagrantup.com/v2/installation/index.html)
+## Preparation
+
+* Install [Vagrant](http://www.vagrantup.com/) (last tested with 1.5)
+* [Installation Instructions](http://docs.vagrantup.com/v2/installation/index.html)
 
 ### How to access the Database on the Vagrant Box
-During the following steps accessing the database is required. The Vagrant box includes MySQL but not phpMyAdmin. Instead use [Sequel Pro](http://www.sequelpro.com/) to connect to the database using these settings: 
+During the following steps accessing the database is required. The Vagrant box includes MySQL but not phpMyAdmin. Use [Sequel Pro](http://www.sequelpro.com/) to connect to the database using these settings: 
 
 * MySql Host: `127.0.0.1`
 * Username: `root`
@@ -24,18 +32,19 @@ During the following steps accessing the database is required. The Vagrant box i
 * SSH Password: `vagrant`
 * SSH Port: `2222`
 
-This Vagrant box includes a database called `Wordpress`. Others can be added if required. These instructions will always use and reference the `Wordpress` DB. 
+This Vagrant box by default includes a database called `Wordpress`. These instructions will always use and reference the `Wordpress` DB however others can be added and used as required.
 
 ### Editing Local Hosts File
 
-Vagrant needs an IP in order to initialize a server but we want to map subdomains to mirror our production environment. For our usecase, and for this example, we will be installing our site at `wordpress.mydomain.com` and want to create `site1.mydomain.com`, `site2.mydomain.com` etc. For development `.local` top level domain. 
+Vagrant needs an IP in order to initialize a server but we want to map subdomains to mirror our production environment. For this example, use `wordpress.mydomain.com` as the parent installation path and create `site1.mydomain.com`, `site2.mydomain.com` etc. For development `.local` top level domains will be used. 
 
 Prior to installing Wordpress edit your local `/etc/hosts`/ file to include these lines: 
 
-	192.168.37.21 wordpress.mydomain.local
-	192.168.37.21 site1.mydomain.local
-	192.168.37.21 site1.wordpress.mydomain.local
-
+```
+192.168.37.21 wordpress.mydomain.local
+192.168.37.21 site1.mydomain.local
+192.168.37.21 site1.wordpress.mydomain.local
+```
 
 * The IP listed is taken from the Vagrantfile
 * Lines 2 and 3 are required for Wordpress to set up and then domain map domains when they are added
@@ -44,31 +53,30 @@ Prior to installing Wordpress edit your local `/etc/hosts`/ file to include thes
 
 ### Shared Folders
 
-This Vagrant Box has two folders thare are shared between your local machine. These have been set in the Vagrant file.  
+This Vagrant Box has two folders that are shared between your local machine.
 
-| Local Path 	| Vagrant Path	|
-| -------------	| -------------	| 
-| /				| /vagrant/		|
-| /www/			| /ebs1/www/	|
+| Local Path  | Vagrant Path  |
+| ------------- | ------------- | 
+| /       | /vagrant/   |
+| /www/     | /ebs1/www/  |
 
 
 ## Getting Started
 
-
-### Initilization
-* Clone the repository: `git clone https://github.com/HootSuiteMediaInc/wordpress-multisite-vagrant.git projectName`
+### Initialization
+* Clone the repository: `git clone https://github.com/hootsuite/wordpress-multisite-vagrant.git projectName`
 * Navigate to the Vagrant folder `cd projectName/config/vagrant/`
 * Download the Vagrant Box and `vagrant up` to initialize the virtual machine
-* Load `http://wordpress.mydomain.local` to test if everything is working, if not visit [Vagrant Docs](http://docs.vagrantup.com/v2/) to get started
+* Load `http://wordpress.mydomain.local` to test if everything is working, if not visit [Vagrant Docs](http://docs.vagrantup.com/v2/) to troubleshoot.
 
 
 ### Install Wordpress MultiSite
 
 * Remove `index.php` in the Vagrant `/www/` folder (it's there to confirm installation went properly)
 * [Install Wordpress](http://codex.wordpress.org/Installing_WordPress) in the `www` folder
-* [Configure Wordpress for multisite](http://codex.wordpress.org/Create_A_Network) - 
-*   * when prompted select *sub domain* set up instead of *sub directories*
-*   * After creating the network there will be a red error at the top of the page (**Warning, Wildcard DNS may not be configured correctly!** ) You can ignore this, as we are handling this with local edits to `/etc/hosts`/ and domain mapping. 
+* [Configure Wordpress for multisite](http://codex.wordpress.org/Create_A_Network)
+   * when prompted select *sub domain* set up instead of *sub directories*
+   * After creating the network there will be a red error at the top of the page (**Warning, Wildcard DNS may not be configured correctly!** ) Ignore this, as it is handled with local edits to `/etc/hosts`/ and domain mapping. 
 * Install [Wordpress MU Domain Mapping](http://wordpress.org/extend/plugins/wordpress-mu-domain-mapping/) and [configure it](http://wordpress.org/extend/plugins/wordpress-mu-domain-mapping/installation/). **Note**: Follow steps 1-3. This plugin has unusual configuration options, read the configuration notes!
 
 ### Add a Domain 
@@ -88,11 +96,14 @@ This Vagrant Box has two folders thare are shared between your local machine. Th
 * Visit [http://site1.mydomain.local](http://site1.mydomain.local) in the browser
 * You're up and running! Enjoy a cold beverage! 
 
-## Grunt.js
-This VM uses [Grunt.js](http://gruntjs.com) as a task runner. The beauty of Vagrant is that it has already been installed on the box and is ready for use without configuring your local machine.
+## Grunt
+
+The Vagrant box includes [Grunt.js](http://gruntjs.com) preinstalled and is ready to use without installing it on your local machine. Alternatively you can install and configure Grunt on your own machine. 
+
+### Installing Grunt
 
 * SSH into the Vagrant Box `vagrant ssh` (while in `config/vagrant`) 
-* Navigate to the directory containing all the config files (`cd /vagrant/config/grunt`)
+* Navigate to the directory containing all the configuration files (`cd /vagrant/config/grunt`)
 * Install all of the plugins by running `npm install`.
 
 This will install:
@@ -110,14 +121,15 @@ This will install:
 You can [customize your Gruntfile](http://gruntjs.com/configuring-tasks) how you want. These are the included tasks. 
 
 First, replace our theme name with yours: 
-	
-	theme: `/ebs1/www/wp-content/themes/hootsuite`
+```
+theme: `/ebs1/www/wp-content/themes/hootsuite`
+```
 
 ### Less
 
-This Gruntfile presumes that you have a main css file (`css/less/styles.less`) that `@imports` all other ones for your project and compiles them to `css/styles.less`. If this isn't the case you'll need to edit the GruntFile to reflect this. 
+This Gruntfile presumes that you have a main css file (`css/less/styles.less`) that `@imports` all other ones for your project and compiles them to `css/styles.less`. If this isn't the case you'll need to edit the Gruntfile to reflect this. 
 
-The following commands are available by default: 
+The following commands are available: 
 
 * `grunt less:development` - builds the CSS but does not compress it
 * `grunt less:production` - builds and compresses the CSS with yuicompress
@@ -126,32 +138,25 @@ The following commands are available by default:
 Any files that are not built from `css/less/styles.less` will have to have additional tasks written for them. (eg `css/less/ie.less`)
 
 ### Javascript
-We needed this gruntfile to work for multiple themes in our Wordpress Multisite installation. Unlike LESS, which just can watch `css/less/styles.less` regardless of which project we're working on, the JS build configuration is going to be different for each project. 
+This Gruntfile works for multiple themes. For many projects, paths can be written directly into the Uglify tasks however for this project the Gruntfile looks for and parses a theme specific file (`js/dev/config.json`) and imports that into any tasks that require it. The syntax for the `js/dev/config.json` file is: 
 
-Normally we would write this directly into the uglify task but abstracted it so that the gruntfile looks for and parses a theme specific file (`js/dev/config.json`) and imports that into any tasks that require it. The syntax for the `js/dev/config.json` file is: 
-
-
-	{"files": [
-		"file1.js", 
-		"file2.js"
-	]}
+```
+  {
+    "files": [
+      "file1.js", 
+      "file2.js"
+    ]
+  }
+```
 
 The following tasks are available to this list of files: 
 
-* `grunt jshint` Runs JSHint on `js/dev/scripts.js`. 
+* `grunt` watches LESS and JS and runs `grunt less:development`, `grunt uglify` and `grunt jshint` when files are saved
+* `grunt jshint` Runs JSHint on `js/dev/scripts.js`
 * `grunt uglify` Runs Uglify on all files specified in `js/dev/config.json` and builds to `js/scripts.min.js`
 * `grunt watch:js` Runs Uglify and JSHint whenever `js/dev/scripts.js` is saved with
 
-### Default Grunt Task
-* `grunt` watches LESS and JS and runs `grunt less:development`, `grunt uglify` and `grunt jshint` when files are saved. 
-
-## Contribution
-
-This project solves a niche issue for us in a very particular way and there are many things required to make this 100% stable and usable for any project required to do after this starting point. 
-
-Anyone is welcome to contribute. 
-
-### Team Members
+### Contributors
 
 * Joe Ying - PHP Developer
 * Jeff Waterfall - Front End / Wordpress Developer 
